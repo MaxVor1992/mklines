@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /build/
+Sitemap: https://mklines.ru//sitemap.xml
+Host: https://mklines.ru

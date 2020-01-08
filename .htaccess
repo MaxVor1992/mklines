@@ -1,0 +1,30 @@
+RewriteEngine On
+
+RewriteCond %{SERVER_PORT} !^443$
+
+RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
+#БАН
+Deny from 185.173.178.171
+deny from 178.49.11.132
+deny from 178.49.99.40
+deny from 178.49.0.0/18
+deny from 178.49.64.0/19
+deny from 178.49.96.0/23
+deny from 178.49.98.0/24
+deny from 178.49.99.0/26
+deny from 178.49.99.64/27
+deny from 178.49.99.96/30
+deny from 37.192.20.115
+deny from 85.17.22.0/23
+deny from 85.17.24.0/23
+deny from 62.84.175.86
+deny from 62.84.160.0 - 62.84.191.255
+deny from 185.9.233.4
+deny from 185.9.233.0 - 185.9.233.255
+deny from 198.180.154.0 - 198.206.196.255
+deny from 162.222.91.0 - 162.248.195.255
+deny from 138.67.0.0 - 138.69.255.255
+deny from 95.153.128.0/20
+deny from 212.20.38.119/32
+deny from 2.95.78.133/32
