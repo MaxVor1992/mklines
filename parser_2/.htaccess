@@ -1,7 +1,0 @@
-SetEnv LD_LIBRARY_PATH "/home/r/rapcooc5/.local/lib:$LD_LIBRARY_PATH"
-PassengerEnabled On
-#PassengerPython /home/r/rapcooc5/mklines/public_html/parser/venv/python.exe
-PassengerAppRoot /home/r/rapcooc5/mklines/public_html/parser
-PassengerBaseURI /parser
-#PassengerPython /usr/bin/python3
-PassengerPython /home/r/rapcooc5/.local/bin/python3.8
