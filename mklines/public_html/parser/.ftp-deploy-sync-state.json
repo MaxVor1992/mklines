@@ -1,0 +1,345 @@
+{
+    "description": "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action",
+    "version": "1.0.0",
+    "generatedTime": 1673366904247,
+    "data": [
+        {
+            "type": "file",
+            "name": ".htaccess",
+            "size": 271,
+            "hash": "4156154f2e8c047383c857e1151e703070eed3846d39d63ece7c37252448e437"
+        },
+        {
+            "type": "folder",
+            "name": "Hello"
+        },
+        {
+            "type": "folder",
+            "name": "parser_app"
+        },
+        {
+            "type": "file",
+            "name": "passenger_wsgi — копия.py",
+            "size": 1198,
+            "hash": "70087c7835607fe6bc556474e939d345ce7425a33b58050883a7499be4ebe27d"
+        },
+        {
+            "type": "file",
+            "name": "passenger_wsgi.py",
+            "size": 1198,
+            "hash": "70087c7835607fe6bc556474e939d345ce7425a33b58050883a7499be4ebe27d"
+        },
+        {
+            "type": "file",
+            "name": "results.csv",
+            "size": 2768,
+            "hash": "cadaacdec9041f3f60ee81fb71fe8995887160977907a9ee01e6ef944febb739"
+        },
+        {
+            "type": "file",
+            "name": "results.xls",
+            "size": 13824,
+            "hash": "55eb015df53cd70bc1ec69412d405389d260b5e864d39bbbf4c3602cc035197f"
+        },
+        {
+            "type": "file",
+            "name": "start.py",
+            "size": 1226,
+            "hash": "bf173715c0db0df5e0ece59d3e13a602d199411daf470d4f0435e0305d679221"
+        },
+        {
+            "type": "folder",
+            "name": "tmp"
+        },
+        {
+            "type": "file",
+            "name": "Hello/__init__.py",
+            "size": 174,
+            "hash": "4e211ca2ab99167092f2b98e89ad4e69ddeddcaae195761b85cc8c99a28df0b6"
+        },
+        {
+            "type": "folder",
+            "name": "Hello/tmp"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/auth.py",
+            "size": 4818,
+            "hash": "a866bcd3000a4ab1fa0cec0568f1d92cfb6062678133084438390acfb487cc11"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/__init__.py",
+            "size": 4987,
+            "hash": "41d77f7b34b2974b8a1f75d57122efde053921a1a81bc33a3b1622f01c84c92a"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/check.py",
+            "size": 1526,
+            "hash": "d9fbd7be23c28957f47a0332ad6c8f11fd01983b3e5022e67d47543168ad5ad4"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/create_init_db.py",
+            "size": 908,
+            "hash": "6c441301cf8c2841bba55541a26ebaf585f3bb31e39200a18e7352ef814aa531"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/db.sqlite",
+            "size": 28672,
+            "hash": "bbe719538c29a0a271b9358b3710e4383771f7119c7f417dfcaa7d31091c2578"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/colorviewer.py",
+            "size": 179,
+            "hash": "be2ec6b920fa84ff20985ce14aec0465cd7301f1b7e5a31371c3959ba47723e3"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/doclusters.py",
+            "size": 1254,
+            "hash": "0fc002d2850d8200320f5860ea62fe58f3e929263407b810375609d7f58ed254"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/for_cache.py",
+            "size": 844,
+            "hash": "3beba5e8cb9620a24596241a96cb3ee95d330324a6811928448f295bb90a2328"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/geo.txt",
+            "size": 7450,
+            "hash": "29c1491eed39eb38897abe575e7428931a6aaf59a5a04fc3e308e5d686106e12"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/lrs.txt",
+            "size": 7582,
+            "hash": "9f510b61898e466fd15e16931dfddab87a777ba02c556392dfcab01e49b1e713"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/main.py",
+            "size": 9127,
+            "hash": "346eeeb511c0f79900de396fa0132f8b993d33272ee5064e3487b68d844c3b1a"
+        },
+        {
+            "type": "folder",
+            "name": "parser_app/models"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/my_threads.py",
+            "size": 843,
+            "hash": "d95e271c31c215c95487bd3a3643cb3530f1e391f40e81bb7052013ca7df00af"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/parse_google_geo.py",
+            "size": 1035,
+            "hash": "e1500cce2f2e22845f9df5049f9a6e57625b2e577f35a0b4e561792d070adaed"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/parser_forms.py",
+            "size": 2735,
+            "hash": "1e2fcf39a41bcdd6d2e5b3d271cfef075a5ed50ecf5735f59eb7f5ca88f1b523"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/parsingres.dat",
+            "size": 34127,
+            "hash": "1b3648a03235ab74925b7c64c3c50e891540225e008acf69939517168e911a0b"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/regions.py",
+            "size": 167,
+            "hash": "b2fe55b45a84cb85969e808b355c2999d8f1a86b1076f7b149076954677a768b"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/request_parser.py",
+            "size": 7510,
+            "hash": "f395a2fc202250dc77b3884e38631630ffc435b3b33c228ddb6093dcecdc3fc9"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/parser_utils.py",
+            "size": 6175,
+            "hash": "0240e30d08bcc47ecd0e418c54c53b81953d2157ff2f094b5fbb93aa3076aac6"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/request_parser_with_ya_xml.py",
+            "size": 3783,
+            "hash": "fe367e3ca6e9b17da6f8820ce5ff7ae0b8b678986b180c4ee2b716d5d155c46d"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/resultobj.py",
+            "size": 4952,
+            "hash": "dd7c4e0f041767ef2eac948fec3d607cf4208593edc9476b6e055a5d71e48b6e"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/requirements.txt",
+            "size": 215,
+            "hash": "f74e6e8ff9d65be342ed00c537f3c484a18919faa1cf007917c35f8e8e0115a9"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/simpleculsters.py",
+            "size": 779,
+            "hash": "f174577e19364128150d092786279ec5c9168122ca459503b1ae64e89f7561e3"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/test_river.py",
+            "size": 629,
+            "hash": "7e1faec4b4d57e36ad86ddfe7e606e3a5be140077ed6d29fb30fa078033b29ec"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/todel.py",
+            "size": 406,
+            "hash": "4b874fa76684bca4963b61e508f8ca5220343ca818d7efce450d0486f535937f"
+        },
+        {
+            "type": "folder",
+            "name": "parser_app/templates"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/utils.py",
+            "size": 509,
+            "hash": "2443c448fb6c7d4736a5a6c386d49a934568ee180d36dcb9a4d984402ddbdde7"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/xmlriver.py",
+            "size": 4581,
+            "hash": "ccaf47859a61ec85d9f3b0b4e35b3b3fe130dfc1a72377cca7f7d1365bf82573"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/xmlriver_multi.py",
+            "size": 3867,
+            "hash": "1288c53f79b4209588b3826e6da2f3384d28e96613ad63896f13503f3e5d907b"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/yandex_xml_parse.py",
+            "size": 943,
+            "hash": "2ee879fd99c3c33f86ca5a1a4296f39f6634203a7038ce2d96bd8cd566ae576b"
+        },
+        {
+            "type": "file",
+            "name": "tmp/restart",
+            "size": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+            "type": "file",
+            "name": "tmp/restart.txt",
+            "size": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+            "type": "file",
+            "name": "Hello/tmp/restart.txt",
+            "size": 0,
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/models/user_models.py",
+            "size": 2724,
+            "hash": "cf17c24cfab34c566724f24508a1b1831773e5fc7f3e2d55a54766f25acd0d29"
+        },
+        {
+            "type": "folder",
+            "name": "parser_app/templates/admin"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/base.html",
+            "size": 4359,
+            "hash": "13c2d4b7ddc2a2a2a7abb78efdd5f960133de2e6242edbd72c67879132fe3e82"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/clusters.html",
+            "size": 7214,
+            "hash": "7deada5f29f749f87c2a75a88c663f6c8fd391d7ab97e0cf31df7bab4c2ad43e"
+        },
+        {
+            "type": "folder",
+            "name": "parser_app/templates/forms"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/index_2.html",
+            "size": 14341,
+            "hash": "6545f387190116a0a944d4e9cc77b1f6e173e1c5ed5a1ad7f74e5d7199db3d92"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/login.html",
+            "size": 1178,
+            "hash": "8d6053f85d1df12483209125b300f5f041655d43f39605bff520508d453fee85"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/profile.html",
+            "size": 313,
+            "hash": "6971cd6e39773e645d0e27df71b49f4ccdf33cf1aee654f44d8253cad012a5f4"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/signup.html",
+            "size": 1262,
+            "hash": "9cc763b5b49cceca13603269438a6d400001bc81a089f6ea16f9417d02fe818b"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/subscribe.html",
+            "size": 226,
+            "hash": "d553f1e89d5fad3d739b15df769c52f9551ee89c2a5bbe476be5a7b51bc207fd"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/test.html",
+            "size": 1020,
+            "hash": "aa687ebf67f021352a333e77b8a91322c2d33d24a7ff38f9b5a33ce12425bd06"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/admin/index.html",
+            "size": 159,
+            "hash": "5216885a39c77c2d22f7e8bc61ecaccc81f31924872f69fc9d3aa436a537e4ac"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/forms/greet_form.html",
+            "size": 568,
+            "hash": "c1a607052a6715c02fd9c90bda6671daa391039f30ed93bc14bfd4f21e761fb1"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/forms/login_form.html",
+            "size": 798,
+            "hash": "c6d336708751607334c9248452818d732a4b67521b4e1ca3873e09e7fbe711f5"
+        },
+        {
+            "type": "file",
+            "name": "parser_app/templates/forms/signup_form.html",
+            "size": 1012,
+            "hash": "8d3071f892b509fc74a70515ec07001366363d5a860b37b1452682cbc5fefabd"
+        }
+    ]
+}

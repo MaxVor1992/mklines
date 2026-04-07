@@ -1,4 +1,13 @@
 User-agent: *
+Disallow: /prays-list/
 Disallow: /build/
-Sitemap: https://mklines.ru//sitemap.xml
+Disallow: /test/
+Disallow: /wp-content/
+Disallow: /feed/
+Disallow: /onlekr/
+Disallow: /tozzlwk4s/
+Disallow: /opzzowi7k/
+Disallow: */?*
+Disallow: */?p=*
+Sitemap: https://mklines.ru/sitemap.xml
 Host: https://mklines.ru

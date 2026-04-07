@@ -1,30 +1,32 @@
-RewriteEngine On
+PassengerFriendlyErrorPages on
+<IfModule mod_rewrite.c>
 
-RewriteCond %{SERVER_PORT} !^443$
-
-RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
-
-#БАН
-Deny from 185.173.178.171
-deny from 178.49.11.132
-deny from 178.49.99.40
-deny from 178.49.0.0/18
-deny from 178.49.64.0/19
-deny from 178.49.96.0/23
-deny from 178.49.98.0/24
-deny from 178.49.99.0/26
-deny from 178.49.99.64/27
-deny from 178.49.99.96/30
-deny from 37.192.20.115
-deny from 85.17.22.0/23
-deny from 85.17.24.0/23
-deny from 62.84.175.86
-deny from 62.84.160.0 - 62.84.191.255
-deny from 185.9.233.4
-deny from 185.9.233.0 - 185.9.233.255
-deny from 198.180.154.0 - 198.206.196.255
-deny from 162.222.91.0 - 162.248.195.255
-deny from 138.67.0.0 - 138.69.255.255
-deny from 95.153.128.0/20
-deny from 212.20.38.119/32
-deny from 2.95.78.133/32
+    RewriteEngine On
+    
+    RewriteCond %{SERVER_PORT} !^443$
+    RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+    
+    #редирект с www
+    Options +FollowSymLinks
+    RewriteCond %{HTTP_HOST} ^www.mklines\.ru$ [NC]
+    RewriteRule ^(.*)$ https://mklines.ru/$1 [R=301,L]
+    
+    #редирет http
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    #редирект с index.php
+    RewriteCond %{THE_REQUEST} ^.*/index.php
+    RewriteRule ^(.*)index.php$ https://%{HTTP_HOST}/$1 [R=301,L]
+    
+    deny from 81.200.81.0 - 81.200.81.51
+    deny from 94.25.174.0 - 94.25.174.10
+    deny from 176.59.129.139 - 176.59.129.139
+    deny from 176.116.164.237
+    deny from 178.169.89.68
+    deny from 66.90.90.138
+    deny from 176.59.148.16
+    deny from 87.200.120.142
+    
+</IfModule>
