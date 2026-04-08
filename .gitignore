@@ -1,6 +1,8 @@
 # Сборка и бандлы
-/analbot
-/build
-/community
-/img
-/test
+analbot/
+build/
+community/
+img/
+test/
+*.png
+*.jpg
