@@ -7,7 +7,13 @@ from .for_cache import timed_lru_cache
 from flask_login import current_user
 from . import db
 USER_ID = "3089"
-KEY = "9305a49e48a27d38f87261f26a6346f4d6508b6d"
+#KEY = "9305a49e48a27d38f87261f26a6346f4d6508b6d"
+
+import os
+# Получаем ключ из переменной окружения. Если её нет — ошибка.
+KEY = os.environ.get('XMLRIVER_KEY')
+if not KEY:
+    raise Exception("Ошибка: Не задан XMLRIVER_KEY в переменных окружения!")
 
 
 def one_google_request(search_string: str, count):

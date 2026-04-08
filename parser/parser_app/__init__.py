@@ -9,6 +9,8 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib import sqla
+from dotenv import load_dotenv
+load_dotenv()  # Загружает переменные из файла .env
 import logging
 
 #logging.basicConfig(filename='/home/r/rapcooc5/mklines/public_html/parser/parser_app/logs.log', level=logging.DEBUG)
