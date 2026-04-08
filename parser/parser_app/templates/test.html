@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{%block content%}
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <main>
+            <div class="wrap">
+
+                    <h2>{{title}}</h2>
+                    <form id="parser-form" method="post" class="parser-form">
+                        <div class="parser-form--col">
+                            <label for="keys" class="label_keys">яша:</label>
+                            <textarea id="keys" class="textarea_keys" name="keys" rows="8" wrap="soft" placeholder="Каждая ключевая фраза с новой строки.">{{result}}</textarea>
+                        </div>
+                    </form>
+
+            </div>
+        </main>
+
+        <link rel="stylesheet" href="/src/css/normalize.css">
+        <link rel="stylesheet" href="/src/css/main_min.css">
+        <script src="/src/js/jquery.min.js"></script>
+    </body>
+</html>
+{% endblock%}}

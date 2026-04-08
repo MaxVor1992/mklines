@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="https://mklines.ru/src/css/normalize.css">
+    <link rel="stylesheet" href="https://mklines.ru/src/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://mklines.ru/src/js/Inputmask/css/inputmask.css">
+    <link rel="stylesheet" href="https://mklines.ru/src/js/fancybox/source/jquery.fancybox.css?v=2.1.7" media="screen" />
+    <link rel="stylesheet" href="https://mklines.ru/src/js/chosen/chosen.min.css" media="screen" />
+    <link rel="stylesheet" href="https://mklines.ru/src/css/main_min.css">
+    <link rel="stylesheet" href="https://mklines.ru/src/css/screen_min.css">
+    
+    <title>{% block title %} {% endblock %}</title>
+    
+  </head>
+<body>
+    <div class="hero is-primary is-fullheight">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% if current_user.is_authenticated %}
+        <b>current user:</b>
+        name: {{ current_user.username }}
+        id:{{ current_user.id }}
+        email: {{ current_user.email }}
+        created on: {{ current_user.created_on }}
+        updated on: {{ current_user.updated_on }}
+        active: {{ current_user.active }}
+        role: {{ current_user.roles }}
+        limits: {{ current_user.user_limit }}
+        {% else %}
+        user not authenticated
+        {% endif %}
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+    
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end">
+                            <a href="{{ url_for('main.index') }}" class="navbar-item">
+                                Home
+                            </a>
+                            <a href="{{ url_for('main.profile') }}" class="navbar-item">
+                                Profile
+                            </a>
+                            <a href="{{ url_for('auth.login') }}" class="navbar-item">
+                                Login
+                            </a>
+                            <a href="{{ url_for('auth.signup') }}" class="navbar-item">
+                                Sign Up
+                            </a>
+                            {% if  current_user.is_authenticated and  current_user.has_role('Admin') %}
+                                <a href="{{ url_for('admin.index') }}" class="navbar-item">admin panel</a>
+                            {% endif %}
+                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://mklines.ru/src/js/jquery.min.js"></script>
+    <script src="https://mklines.ru/src/js/Inputmask/dist/inputmask/inputmask.js"></script>
+    <script src="https://mklines.ru/src/js/Inputmask/dist/jquery.inputmask.bundle.js"></script>
+    <script src="https://mklines.ru/src/js/fancybox/source/jquery.fancybox.pack.js?v=2.1.7"></script>
+    <script src="https://mklines.ru/src/js/chosen/chosen.jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script rel="stylesheet" href="https://mklines.ru/src/fontawesome/js/all.min.js"></script>
+    <script src="https://mklines.ru/src/js/main_min.js"></script>
+  </body>
+</html>
