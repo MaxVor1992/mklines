@@ -1,11 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 # db = SQLAlchemy()
 # SQLAlchemy.create_engine("sqlite:///users.db")
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask_login import UserMixin
-from flask_security import RoleMixin
 from .. import db
 import datetime
 
@@ -16,7 +14,8 @@ roles_users = db.Table(
 )
 
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model):
+    """Модель роли пользователя"""
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -27,6 +26,7 @@ class Role(db.Model, RoleMixin):
 
 
 class User(db.Model, UserMixin):
+    """Модель пользователя"""
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -37,8 +37,7 @@ class User(db.Model, UserMixin):
     user_data = db.Column(db.String(256))
     created_on = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-    # Нужен для security!
-    active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(), default=True)
 
     # Для получения доступа к связанным объектам
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
