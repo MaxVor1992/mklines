@@ -4,5 +4,8 @@ build/
 community/
 img/
 test/
+Inputmask/
+chosen_1_8_7/
+jquery-3.2.1.min.js
 *.png
 *.jpg
