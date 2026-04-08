@@ -11,7 +11,21 @@ from flask_admin import AdminIndexView, expose
 from flask_admin.contrib import sqla
 from dotenv import load_dotenv
 load_dotenv()  # Загружает переменные из файла .env
+
+# ВКЛЮЧЕНО: Логирование
 import logging
+from logging.handlers import RotatingFileHandler
+import os
+
+if not app.debug:
+    file_handler = RotatingFileHandler('parser.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Parser application startup')
 
 #logging.basicConfig(filename='/home/r/rapcooc5/mklines/public_html/parser/parser_app/logs.log', level=logging.DEBUG)
 
@@ -70,7 +84,7 @@ class MyAdminIndexView(AdminIndexView):
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'dfjndsf*(&^*&3424kdflksdfds78465fdsf398439802sdfsdf'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24))
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['TESTING'] = True
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
