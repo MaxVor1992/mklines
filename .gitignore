@@ -11,9 +11,6 @@ __pycache__/
 *.out
 
 # Dependencies
-node_modules/
-venv/
-.venv/
 .mypy_cache/
 .pytest_cache/
 dist/
@@ -25,7 +22,6 @@ img/
 test/
 Inputmask/
 chosen_1_8_7/
-.gradle/
 
 # Editor/IDE files
 .vscode/
@@ -37,9 +33,6 @@ chosen_1_8_7/
 # System files
 .DS_Store
 Thumbs.db
-.env
-.env.local
-*.env.*
 
 # Logs and coverage
 *.log
