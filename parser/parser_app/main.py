@@ -101,11 +101,12 @@ def index():
                 result_of_parsing = launch_parser(tuple(search), engine, region, depth, repeats=iteration,
                                                   docache=docache)
                 print("end parsing results")
-                result_of_parsing.calc_clusters(barrier)
-                print("end calc clusters")
-                save_csv(result_of_parsing)
+                # Кластеризация выполняется только по запросу пользователя через форму cluster-form
+                # Автоматический вызов удален для избежания дублирования
+                print("cluster calculation skipped - waiting for user request")
+                save_csv(result_of_parsing, current_user.id if current_user.is_authenticated else 'anon')
                 #res = prepare_xls(result_of_parsing)
-                save_xls(result_of_parsing)
+                save_xls(result_of_parsing, current_user.id if current_user.is_authenticated else 'anon')
                 print("end save csv")
                 same_urls_keys = get_same_urls_new(result_of_parsing)
                 print("end get same urls")
@@ -142,16 +143,17 @@ def toclusters():
 
 
 @main.route("/getXLS", methods=['GET'])
+@login_required
 def getXLS():
     try:
-        file = open("results.csv", 'rb')
+        filename = f"results_{current_user.id}.csv"
+        file = open(filename, 'rb')
         return Response(file.read(),
                         mimetype="text/csv",
                         headers={"Content-disposition":
-                                     "attachment; filename=results.csv"})
+                                     f"attachment; filename={filename}"})
     except Exception as e:
         # flash("что-то пошло не так при загрузке файла\n", e)
-
         return render_template_string("something goes wrong!!!")
 
 

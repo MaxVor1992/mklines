@@ -49,8 +49,10 @@ colors = {
 columns = ["#", "позиция", "url", "title", "request", "request position"]
 
 
-def save_csv(res):
-    file = open("results.csv", 'w')
+def save_csv(res, user_id='anon'):
+    import os
+    filename = f"results_{user_id}.csv"
+    file = open(filename, 'w')
     writer = csv.writer(file)
     writer.writerow(columns)
     inx = 1
@@ -90,7 +92,7 @@ def prepare_xls(res):
         req_inx += 1
     return d
 
-def save_xls(res: ParsingResult):
+def save_xls(res: ParsingResult, user_id='anon'):
     print("test" * 100)
     print(res)
     print("test" * 100)
@@ -125,7 +127,8 @@ def save_xls(res: ParsingResult):
             inx_k += 1
         req_inx += 1
 
-    book.save("results.xls")
+    filename = f"results_{user_id}.xls"
+    book.save(filename)
 
 # res = {'окна': [(< resultobj.SingleResult object at 0x7f0a34ddef40 >, 1.0),
 #                 (< resultobj.SingleResult object at 0x7f0a34ddefd0 >, 2.0),
