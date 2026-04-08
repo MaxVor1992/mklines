@@ -1,4 +1,3 @@
-```gitignore
 # Compiled and binary files
 *.pyc
 __pycache__/
@@ -20,6 +19,12 @@ venv/
 dist/
 build/
 target/
+analbot/
+community/
+img/
+test/
+Inputmask/
+chosen_1_8_7/
 .gradle/
 
 # Editor/IDE files
@@ -65,4 +70,3 @@ htmlcov/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
