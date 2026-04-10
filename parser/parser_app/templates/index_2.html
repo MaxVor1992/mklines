@@ -3,7 +3,41 @@
 <main>
     <div class="wrap">
         <div class="parser-table">
-            <h2>{{title}}</h2>
+            <h2 style="display: inline-block; margin-right: 15px;">{{title}}</h2>
+            {% if current_user.has_role('Admin') %}
+            <button id="btn-speed-test" type="button" onclick="runSpeedTest()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; margin-bottom: 15px;">🚀 Тест скорости</button>
+            {% endif %}
+            <div id="speed-test-result" style="display:none; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                <h3 style="margin-top: 0;">🚀 Тест скорости XMLRiver парсера</h3>
+                <div id="speed-test-progress" style="display:none;">
+                    <p style="color: #666; margin: 5px 0;">⏳ <span id="speed-test-status">Инициализация...</span></p>
+                    <div style="background: #e0e0e0; border-radius: 4px; height: 20px; overflow: hidden;">
+                        <div id="speed-test-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">0%</div>
+                    </div>
+                </div>
+                <div id="speed-test-table" style="display:none; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <thead>
+                            <tr style="background: #667eea; color: white;">
+                                <th style="padding: 8px; text-align: left;">Тест</th>
+                                <th style="padding: 8px; text-align: center;">Запуск</th>
+                                <th style="padding: 8px; text-align: center;">Город</th>
+                                <th style="padding: 8px; text-align: center;">Время (сек)</th>
+                                <th style="padding: 8px; text-align: center;">Запросов</th>
+                                <th style="padding: 8px; text-align: center;">Успешно</th>
+                                <th style="padding: 8px; text-align: center;">Результатов</th>
+                            </tr>
+                        </thead>
+                        <tbody id="speed-test-tbody"></tbody>
+                    </table>
+                    <div id="speed-test-stats" style="margin-top: 15px; padding: 10px; background: white; border-radius: 4px;">
+                        <strong>📊 Статистика:</strong>
+                        Среднее: <span id="stat-avg" style="font-weight: bold; color: #667eea;">—</span> сек |
+                        Мин: <span id="stat-min" style="font-weight: bold; color: #27ae60;">—</span> сек |
+                        Макс: <span id="stat-max" style="font-weight: bold; color: #e74c3c;">—</span> сек
+                    </div>
+                </div>
+            </div>
             <form id="parser-form" method="post" class="parser-form">
                 <div class="parser-form--col">
                     <label for="keys" class="label_keys">Ключевые слова (максимум 50 ключевых фраз):</label>
@@ -17,16 +51,14 @@
                             <option value=11 data-search="js-city-y" disabled {% if engine== 11 %} selected {% endif %}>
                                 Яндекс нативный
                             </option>
-                            <option value=12 data-search="js-city-y" {% if engine== 12 %} selected {% endif %}>Яндекс XML
-                                River
+                            <option value=12 data-search="js-city-y" {% if engine== 12 %} selected {% endif %}>Яндекс XML River (живой поиск)
                             </option>
-                            <option value=13 data-search="js-city-y" {% if engine== 13 %} selected {% endif %}>Яндекс XML
+                            <option value=13 data-search="js-city-y" disabled {% if engine== 13 %} selected {% endif %}>Яндекс XML (недоступно)
                             </option>
-                            <option value=21 data-search="js-city-g" {% if engine== 21 %} selected {% endif %}>Google
-                                нативный
+                            <option value=21 data-search="js-city-g" disabled {% if engine== 21 %} selected {% endif %}>Google
+                                нативный (недоступно)
                             </option>
-                            <option value=22 data-search="js-city-g" {% if engine== 22 %} selected {% endif %}>Google XML
-                                River
+                            <option value=22 data-search="js-city-g" {% if engine== 22 %} selected {% endif %}>Google XML River (Веб поиск)
                             </option>
                         </select>
                     </div>
@@ -55,6 +87,16 @@
                         </select>
                     </div>
                 </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="parser-form--col" style="flex-basis: 30%;">
+                        <label for="device" class="label_device">Выберите устройство:</label>
+                        <select id="device" class="select_device" name="device" aria-invalid="false">
+                            <option value="desktop"{% if device == "desktop" or not device %} selected {% endif %}>Desktop (ПК)</option>
+                            <option value="tablet"{% if device == "tablet" %} selected {% endif %}>Tablet (Планшет)</option>
+                            <option value="mobile"{% if device == "mobile" %} selected {% endif %}>Mobile (Мобильный)</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="parser-form--col">
                     <p class="label_depth">Глубина проверки:</p>
                     <div class="parser-form--row">
@@ -71,11 +113,12 @@
                 </div>
                 <br>
                 <div class="parser-form--row">
-                    <input id="docache_id" type="checkbox" name="docache" checked>
+                    <input id="docache_id" type="checkbox" name="docache">
                     <label class="label_iteration label_docache" for="docache_id">Кешировать запросы</label>
                 </div>
                 <div class="parser-form--row">
                     <button class="parser-submit" type="submit" name="btn_submit" value="Начать проверку">Начать проверку</button>
+                    <button class="parser-submit parser-submit-async" type="button" name="btn_submit_async" value="Запустить фоном" style="display:none; background-color: #27ae60; margin-left: 10px;">⚡ Запустить фоном</button>
                     <span class="progress-text" style="display:none; margin-left: 15px; color: #2e88d6;">Идет парсинг, пожалуйста, подождите...</span>
                     <div class="preloader">
                         <svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +127,19 @@
                                   d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z">
                             </path>
                         </svg>
+                    </div>
+                </div>
+                <!-- Async task progress -->
+                <div id="async-progress" style="display:none; margin-top: 15px; padding: 15px; background: #f0f9ff; border-radius: 8px; border: 1px solid #2e88d6;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #2e88d6; font-weight: bold;">⚡ Фоновая задача:</span>
+                        <span id="async-progress-status">Запуск...</span>
+                    </div>
+                    <div style="margin-top: 10px; background: #e0e0e0; border-radius: 4px; height: 20px; overflow: hidden;">
+                        <div id="async-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #2e88d6, #4ecdc4); transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">0%</div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #666;">
+                        Обработано: <span id="async-progress-count">0</span> из <span id="async-progress-total">0</span> запросов
                     </div>
                 </div>
             </form>
@@ -112,9 +168,9 @@
                     <div class="klastery">
                         <div class="klastery-text">Кластеризация:</div>
                         <div class="klastery-block">
-                            <form id="cluster-form" method="post">
+                            <form id="cluster-form">
                               <input class="klastery_percent" type="text" name="klastery-inp" placeholder="% коллизий" value="{{barrier}}">
-                              <button class="klastery_submit" type="submit" name="klastery-submit" value="Кластеризовать">Кластеризовать</button>
+                              <button class="klastery_submit" type="button" name="klastery-submit" value="Кластеризовать">Кластеризовать</button>
                             </form>
                         </div>
                     </div>
@@ -123,8 +179,8 @@
             
             <div class="column-format-bottom">
                 <div class="column-xls">
-                    <a class="download-csv" href="/parser/getXLS"><!--getcsv--><i class="fa fa-download" aria-hidden="true"></i> CSV</a>
-                    <a class="download-xls" href="/parser/getXLS"><!--getxls--><i class="fa fa-download" aria-hidden="true"></i> XLS</a>
+                    <a class="download-csv" href="/parser/getCSV"><i class="fa fa-download" aria-hidden="true"></i> CSV</a>
+                    <a class="download-xls" href="/parser/getXLS"><i class="fa fa-download" aria-hidden="true"></i> XLS</a>
                 </div>
                 
                 <div class="column-button">
@@ -145,7 +201,23 @@
                         <td class="table-head--key">"{{k}}"</td>
                     </tr>
                     <tr class="table-klastery-tr">
-                        <td class="table-klastery-td" colspan="3">Кластер № {{ clusters[k] + 1 }}</td>
+                        {% if clusters and k in clusters %}
+                        <td class="table-klastery-td" colspan="3">
+                            Кластер № {{ clusters[k] + 1 }}
+                            {% if cluster_commercial and k in cluster_commercial %}
+                                {% if cluster_commercial[k] %}
+                                    <span class="cluster-marker commercial">К.</span>
+                                {% else %}
+                                    <span class="cluster-marker informational">И.</span>
+                                {% endif %}
+                            {% else %}
+                                <!-- DEBUG: cluster_commercial not set for this key -->
+                                <span class="cluster-marker informational">И.</span>
+                            {% endif %}
+                        </td>
+                        {% else %}
+                        <td class="table-klastery-td" colspan="3">Кластер не определён</td>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody class="table-body">
@@ -153,7 +225,10 @@
                     <!--<tr bgcolor="{{'#ffcc00' if i%2==0 else '#ffccaa'}}">-->
                     <tr>
                         <!-- <td class="table-body--number" bgcolor="{{clusters_colors[k] }}" >{{i+1}}</td> -->
-                        <td class="table-body--number" >{{i+1}}</td>
+                        <td class="table-body--number js-show-meta"
+                            data-meta-key="{{ k }}-{{ i }}">
+                            {{i+1}}
+                        </td>
                         <td class="table-body--favicon"><img src="{{get_favico(answer[k][i][0])}}"></td>
                         <td class="table-body--url" {%if answer[k][i][0] in same_urls %} bgcolor="{{same_urls[answer[k][i][0]]}}" {% endif %}>
                             <a class="js-site-link"
@@ -229,5 +304,627 @@
             <button class="button-lighting-url btn_url_on" type="submit" value="Подсветить url">Подсветить</button>
         </div>
     </div>
+    
+    <!-- Pop-up для title и description -->
+    <div id="meta-popup" class="popup-meta" style="display: none;">
+        <div class="popup-meta-content">
+            <div class="popup-meta-header">
+                <span class="popup-meta-close">&times;</span>
+            </div>
+            <h4 class="meta-label">Title</h4>
+            <div id="meta-title" class="meta-text"></div>
+            <h4 class="meta-label">Description</h4>
+            <div id="meta-description" class="meta-text"></div>
+        </div>
+    </div>
 </main>
-{% endblock%}}
+
+<!-- JavaScript для подсветки главных страниц и доменов (Vanilla JS - не требует jQuery) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Кнопка "Одинаковые домены" - подсвечивает идентичные домены с toggle
+    var btnDomains = document.querySelector('button[name="btn_domains"]');
+    if (btnDomains) {
+        var domainsHighlighted = false; // Состояние подсветки
+
+        btnDomains.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            if (domainsHighlighted) {
+                // Если уже подсвечено - снимаем подсветку
+                var allUrlCells = document.querySelectorAll('.answer-table .table-body--url');
+                allUrlCells.forEach(function(cell) {
+                    cell.style.backgroundColor = '';
+                });
+                domainsHighlighted = false;
+                console.log('Подсветка доменов снята');
+            } else {
+                // Иначе подсвечиваем одинаковые домены
+                // Собираем все домены и считаем повторения
+                var domainCounts = {};
+                var domainUrls = {};
+
+                var allLinks = document.querySelectorAll('.answer-table a.js-site-link');
+                allLinks.forEach(function(link) {
+                    var url = link.getAttribute('href');
+                    try {
+                        // Извлекаем домен из URL
+                        var urlObj = new URL(url, window.location.origin);
+                        var domain = urlObj.hostname;
+
+                        if (!domainCounts[domain]) {
+                            domainCounts[domain] = 0;
+                            domainUrls[domain] = [];
+                        }
+                        domainCounts[domain]++;
+                        domainUrls[domain].push(link);
+                    } catch(e) {
+                        // Игнорируем невалидные URL
+                        console.warn('Invalid URL:', url);
+                    }
+                });
+
+                // Подсвечиваем домены, которые встречаются более одного раза
+                var count = 0;
+                for (var domain in domainCounts) {
+                    if (domainCounts[domain] > 1) {
+                        domainUrls[domain].forEach(function(link) {
+                            var urlCell = link.closest('.table-body--url');
+                            if (urlCell) {
+                                urlCell.style.backgroundColor = '#87ceeb';  // Голубой цвет для одинаковых доменов
+                                count++;
+                            }
+                        });
+                    }
+                }
+
+                domainsHighlighted = true;
+                console.log('Подсвечено одинаковых доменов: ' + count);
+            }
+        });
+    }
+});
+</script>
+
+<!-- JavaScript для инициализации регионов при загрузке и кластеризации -->
+<script>
+(function() {
+    // Ждем загрузки jQuery и DOM
+    function initParserScripts() {
+        if (typeof jQuery === 'undefined') {
+            // jQuery еще не загружен, пробуем снова через 100ms
+            setTimeout(initParserScripts, 100);
+            return;
+        }
+
+        jQuery(document).ready(function($) {
+            // Инициализация видимости регионов при загрузке страницы
+            $('.select_engine').trigger('change');
+            $('.js-chosen').trigger('chosen:updated');
+
+            // AJAX кластеризация без перезагрузки страницы
+            $('#cluster-form .klastery_submit').on('click', function(e) {
+                e.preventDefault();
+
+                var barrier = $('#cluster-form .klastery_percent').val();
+                var $btn = $(this);
+                var originalText = $btn.text();
+
+                // Показываем процесс
+                $btn.text('Кластеризация...').prop('disabled', true);
+
+                $.ajax({
+                    url: '/parser/clusterize',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ barrier: barrier }),
+                    success: function(response) {
+                        // Обновляем кластеры на странице
+                        if (response.clusters) {
+                            // Обновляем все таблицы с результатами
+                            $('.answer-table').each(function() {
+                                var $table = $(this);
+                                var $keyCell = $table.find('.table-head--key');
+                                var keyText = $keyCell.text().replace(/"/g, '').trim();
+                                
+                                // Ищем кластер для этого ключа
+                                if (response.clusters[keyText] !== undefined) {
+                                    var clusterNum = response.clusters[keyText] + 1;
+                                    var $clusterRow = $table.find('.table-klastery-tr');
+                                    if ($clusterRow.length) {
+                                        var markerHtml = '';
+                                        if (response.cluster_commercial && response.cluster_commercial[keyText] !== undefined) {
+                                            if (response.cluster_commercial[keyText]) {
+                                                markerHtml = '<span class="cluster-marker commercial">К.</span>';
+                                            } else {
+                                                markerHtml = '<span class="cluster-marker informational">И.</span>';
+                                            }
+                                        }
+                                        $clusterRow.find('.table-klastery-td').html('Кластер № ' + clusterNum + ' ' + markerHtml);
+                                    }
+                                }
+                            });
+                        }
+
+                        // Обновляем значение barrier
+                        if (response.barrier) {
+                            $('#cluster-form .klastery_percent').val(response.barrier);
+                        }
+
+                        $btn.text(originalText).prop('disabled', false);
+                        console.log('Кластеризация завершена успешно');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Ошибка кластеризации:', error);
+                        var errorMsg = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Неизвестная ошибка';
+                        alert('Ошибка кластеризации: ' + errorMsg);
+                        $btn.text(originalText).prop('disabled', false);
+                    }
+                });
+            });
+        });
+    }
+
+    // Запускаем инициализацию
+    initParserScripts();
+})();
+</script>
+
+<!-- CSS для meta pop-up -->
+<style>
+.popup-meta {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.popup-meta-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.popup-meta-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.meta-label {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.popup-meta-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+}
+.popup-meta-close {
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+.popup-meta-close:hover {
+    color: #333;
+}
+.meta-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+}
+.table-body--number.js-show-meta {
+    cursor: pointer;
+    color: #2e88d6;
+    font-weight: bold;
+}
+.table-body--number.js-show-meta:hover {
+    background-color: #e8f4fd;
+}
+.cluster-marker {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 12px;
+}
+.cluster-marker.commercial {
+    background-color: #ff6b6b;
+    color: #fff;
+}
+.cluster-marker.informational {
+    background-color: #4ecdc4;
+    color: #fff;
+}
+</style>
+
+<!-- JavaScript для meta pop-up -->
+<script>
+// Meta данные хранятся в JS объекте чтобы избежать обрезания
+var metaData = {};
+{% for k in answer %}
+    {% for i in range(answer[k]|count) %}
+        {% set raw_title = answer[k][i][0].title or '' %}
+        {% set raw_desc = answer[k][i][0].description or '' %}
+metaData["{{ k }}-{{ i }}"] = {
+    title: {{ raw_title | tojson }},
+    description: {{ raw_desc | tojson }}
+};
+    {% endfor %}
+{% endfor %}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var metaPopup = document.getElementById('meta-popup');
+    var metaTitle = document.getElementById('meta-title');
+    var metaDescription = document.getElementById('meta-description');
+    var closeBtn = document.querySelector('.popup-meta-close');
+    
+    // Функция очистки от CDATA и спецсимволов
+    function cleanMeta(text) {
+        if (!text) return '(не указан)';
+        return text
+            .replace(/<!\[CDATA\[/g, '')
+            .replace(/\]\]>/g, '')
+            .replace(/</g, '')
+            .replace(/>/g, '')
+            .replace(/\n/g, ' ')
+            .trim() || '(не указан)';
+    }
+    
+    // Открытие pop-up по клику на номер
+    document.querySelectorAll('.js-show-meta').forEach(function(cell) {
+        cell.addEventListener('click', function() {
+            var key = this.getAttribute('data-meta-key');
+            var data = metaData[key];
+            
+            if (data) {
+                metaTitle.textContent = cleanMeta(data.title);
+                metaDescription.textContent = cleanMeta(data.description);
+            } else {
+                metaTitle.textContent = '(нет данных)';
+                metaDescription.textContent = '(нет данных)';
+            }
+            metaPopup.style.display = 'flex';
+        });
+    });
+    
+    // Закрытие pop-up
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            metaPopup.style.display = 'none';
+        });
+    }
+    
+    // Закрытие по клику вне контента
+    metaPopup.addEventListener('click', function(e) {
+        if (e.target === metaPopup) {
+            metaPopup.style.display = 'none';
+        }
+    });
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && metaPopup.style.display === 'flex') {
+            metaPopup.style.display = 'none';
+        }
+    });
+});
+</script>
+
+<!-- JavaScript для async режима парсинга -->
+<script>
+(function() {
+    // Async task manager
+    var currentTaskId = null;
+    var pollInterval = null;
+
+    // Показываем кнопку "Запустить фоном" если 10+ запросов
+    function checkAsyncAvailability() {
+        var keysTextarea = document.getElementById('keys');
+        var asyncButton = document.querySelector('.parser-submit-async');
+        if (!keysTextarea || !asyncButton) return;
+
+        var lines = keysTextarea.value.split('\n').filter(function(line) {
+            return line.trim().length > 0;
+        });
+
+        if (lines.length >= 10) {
+            asyncButton.style.display = 'inline-block';
+        } else {
+            asyncButton.style.display = 'none';
+        }
+    }
+
+    // Обработчик кнопки "Запустить фоном"
+    var asyncButton = document.querySelector('.parser-submit-async');
+    if (asyncButton) {
+        asyncButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            launchAsyncTask();
+        });
+    }
+
+    // Отслеживаем изменение количества запросов
+    var keysTextarea = document.getElementById('keys');
+    if (keysTextarea) {
+        keysTextarea.addEventListener('input', checkAsyncAvailability);
+        // Проверяем при загрузке
+        setTimeout(checkAsyncAvailability, 500);
+    }
+
+    function launchAsyncTask() {
+        var keysTextarea = document.getElementById('keys');
+        var engineSelect = document.getElementById('engine');
+        var regionSelect = document.querySelector('.select_region');
+        var depthRadio = document.querySelectorAll('.input_depth');
+        var iterationSelect = document.querySelector('.select_iteration');
+        var deviceSelect = document.querySelector('.select_device');
+
+        if (!keysTextarea) return;
+
+        var keys = keysTextarea.value.split('\n').filter(function(line) {
+            return line.trim().length > 0;
+        }).map(function(line) {
+            return line.trim();
+        });
+
+        if (keys.length === 0) {
+            alert('Введите хотя бы один поисковый запрос');
+            return;
+        }
+
+        if (keys.length > 50) {
+            alert('Максимум 50 запросов');
+            return;
+        }
+
+        var engine = engineSelect ? engineSelect.value : 12;
+        var region = regionSelect ? regionSelect.value : 213;
+        var depth = 10;
+        depthRadio.forEach(function(radio) {
+            if (radio.checked) depth = parseInt(radio.value);
+        });
+        var iteration = iterationSelect ? parseInt(iterationSelect.value) : 1;
+        var device = deviceSelect ? deviceSelect.value : 'desktop';
+
+        // Показываем прогресс
+        var progressContainer = document.getElementById('async-progress');
+        var progressBar = document.getElementById('async-progress-bar');
+        var progressStatus = document.getElementById('async-progress-status');
+        var progressCount = document.getElementById('async-progress-count');
+        var progressTotal = document.getElementById('async-progress-total');
+
+        progressContainer.style.display = 'block';
+        progressStatus.textContent = 'Создание задачи...';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '0%';
+        progressCount.textContent = '0';
+        progressTotal.textContent = keys.length;
+
+        // Отправляем запрос на создание задачи (относительный путь)
+        fetch('api/task/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                keys: keys,
+                engine: parseInt(engine),
+                region: parseInt(region),
+                depth: depth,
+                iteration: iteration,
+                device: device
+            })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.error) {
+                progressStatus.textContent = 'Ошибка: ' + data.error;
+                return;
+            }
+
+            currentTaskId = data.task_id;
+            progressStatus.textContent = 'Задача создана, ожидание результатов...';
+
+            // Запускаем polling статуса
+            startPolling();
+        })
+        .catch(function(err) {
+            progressStatus.textContent = 'Ошибка создания задачи: ' + err.message;
+            console.error('Error creating task:', err);
+        });
+    }
+
+    function startPolling() {
+        if (pollInterval) clearInterval(pollInterval);
+
+        var progressStatus = document.getElementById('async-progress-status');
+        var progressBar = document.getElementById('async-progress-bar');
+        var progressCount = document.getElementById('async-progress-count');
+
+        pollInterval = setInterval(function() {
+            if (!currentTaskId) return;
+
+            fetch('api/task/status?task_id=' + encodeURIComponent(currentTaskId))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.error) {
+                        progressStatus.textContent = 'Ошибка: ' + data.error;
+                        clearInterval(pollInterval);
+                        return;
+                    }
+
+                    // Обновляем прогресс
+                    var progress = data.progress || 0;
+                    var processed = data.processed || 0;
+                    var total = data.total || 0;
+
+                    progressBar.style.width = progress + '%';
+                    progressBar.textContent = progress + '%';
+                    progressCount.textContent = processed;
+
+                    if (data.status === 'running') {
+                        progressStatus.textContent = 'Обработка...';
+                    } else if (data.status === 'done') {
+                        progressStatus.textContent = 'Завершено! Загрузка результатов...';
+                        progressBar.style.width = '100%';
+                        progressBar.textContent = '100%';
+                        clearInterval(pollInterval);
+
+                        // Загружаем результат
+                        loadTaskResult(currentTaskId);
+                    } else if (data.status === 'error') {
+                        progressStatus.textContent = 'Ошибка: ' + (data.error || 'неизвестная');
+                        clearInterval(pollInterval);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Error polling status:', err);
+                });
+        }, 3000); // Опрос каждые 3 секунды
+    }
+
+    function loadTaskResult(taskId) {
+        var progressStatus = document.getElementById('async-progress-status');
+
+        fetch('api/task/result?task_id=' + encodeURIComponent(taskId))
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.error) {
+                    progressStatus.textContent = 'Ошибка получения результата: ' + data.error;
+                    return;
+                }
+
+                progressStatus.textContent = 'Результаты загружены! Перезагрузка страницы...';
+
+                // Перезагружаем страницу с результатами
+                // Пока просто перезагрузка — пользователь увидит результаты из сессии
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            })
+            .catch(function(err) {
+                progressStatus.textContent = 'Ошибка загрузки результатов: ' + err.message;
+                console.error('Error loading result:', err);
+            });
+    }
+})();
+</script>
+
+<!-- JavaScript для теста скорости -->
+<script>
+var speedTestPollInterval = null;
+
+function runSpeedTest() {
+    var resultDiv = document.getElementById('speed-test-result');
+    var progressDiv = document.getElementById('speed-test-progress');
+    var tableDiv = document.getElementById('speed-test-table');
+    var statusSpan = document.getElementById('speed-test-status');
+    var progressBar = document.getElementById('speed-test-bar');
+    var tbody = document.getElementById('speed-test-tbody');
+    var btn = document.getElementById('btn-speed-test');
+
+    // Показываем контейнер
+    resultDiv.style.display = 'block';
+    progressDiv.style.display = 'block';
+    tableDiv.style.display = 'none';
+    tbody.innerHTML = '';
+    btn.disabled = true;
+    btn.textContent = '⏳ Тест запущен...';
+
+    // Запускаем тест
+    fetch('api/speed_test', { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'error') {
+                statusSpan.textContent = 'Ошибка: ' + data.error;
+                btn.disabled = false;
+                btn.textContent = '🚀 Тест скорости';
+                return;
+            }
+
+            // Poll статуса каждые 2 секунды
+            if (speedTestPollInterval) clearInterval(speedTestPollInterval);
+
+            speedTestPollInterval = setInterval(function() {
+                fetch('api/speed_test')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        statusSpan.textContent = data.current || 'Выполняется...';
+                        progressBar.style.width = (data.progress || 0) + '%';
+                        progressBar.textContent = (data.progress || 0) + '%';
+
+                        if (data.status === 'done') {
+                            clearInterval(speedTestPollInterval);
+                            showSpeedTestResults(data);
+                        } else if (data.status === 'error') {
+                            clearInterval(speedTestPollInterval);
+                            statusSpan.textContent = 'Ошибка: ' + (data.error || 'неизвестная');
+                            btn.disabled = false;
+                            btn.textContent = '🚀 Тест скорости';
+                        }
+                    });
+            }, 2000);
+        });
+}
+
+function showSpeedTestResults(data) {
+    var progressDiv = document.getElementById('speed-test-progress');
+    var tableDiv = document.getElementById('speed-test-table');
+    var tbody = document.getElementById('speed-test-tbody');
+    var btn = document.getElementById('btn-speed-test');
+
+    progressDiv.style.display = 'none';
+    tableDiv.style.display = 'block';
+
+    // Заполняем таблицу
+    tbody.innerHTML = '';
+    (data.results || []).forEach(function(r) {
+        var row = tbody.insertRow();
+        row.innerHTML =
+            '<td style="padding: 6px; border-bottom: 1px solid #eee;">' + r.test + '</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee;">' + r.run + '/2</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee;">📍 ' + (r.city || '—') + '</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee; font-weight: bold;">' + r.time_sec + 'с</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee;">' + r.queries + '</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee;">' + r.successful + '</td>' +
+            '<td style="padding: 6px; text-align: center; border-bottom: 1px solid #eee;">' + r.total_results + '</td>';
+    });
+
+    // Статистика
+    if (data.stats) {
+        document.getElementById('stat-avg').textContent = data.stats.avg + 'с';
+        document.getElementById('stat-min').textContent = data.stats.min + 'с';
+        document.getElementById('stat-max').textContent = data.stats.max + 'с';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '🚀 Тест скорости (повторить)';
+}
+</script>
+
+{% endblock%}

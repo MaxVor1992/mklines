@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <div class="wrap">
+        <div class="parser-table">
+            <h2>{{ title }}</h2>
+            
+            <div class="profile-controls" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+                <h3>Запустить профилирование</h3>
+                <form action="/parser/run_profile_analysis" method="post">
+                    <div style="margin-bottom: 10px;">
+                        <label>Ключевые слова:</label><br>
+                        <textarea name="keys" rows="3" cols="50" style="width: 100%;">тестовый запрос</textarea>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Движок:</label>
+                        <select name="engine">
+                            <option value="12">Yandex XML River</option>
+                            <option value="22">Google XML River</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Регион:</label>
+                        <input type="number" name="region" value="213" style="width: 80px;">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Глубина:</label>
+                        <input type="number" name="depth" value="10" style="width: 80px;">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Итерации:</label>
+                        <input type="number" name="iteration" value="1" min="1" max="3" style="width: 80px;">
+                    </div>
+                    <button type="submit" class="parser-submit">🔍 Запустить профилирование</button>
+                </form>
+            </div>
+            
+            <h3>Последние отчёты</h3>
+            
+            {% if reports %}
+            <table class="answer-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Операция</th>
+                        <th>Время (сек)</th>
+                        <th>Память Peak (KB)</th>
+                        <th>Память Current (KB)</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ report.operation }}</td>
+                        <td>{{ "%.2f"|format(report.time.time_seconds) }}</td>
+                        <td>{{ "%.0f"|format(report.memory.peak_size_kb) }}</td>
+                        <td>{{ "%.0f"|format(report.memory.current_size_kb) }}</td>
+                        <td>{{ report.timestamp }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Нет отчётов профилирования. Запустите профилирование через форму выше.</p>
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+<style>
+    .profile-controls {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .profile-controls h3 {
+        margin-top: 0;
+        color: white;
+    }
+    
+    .profile-controls label {
+        font-weight: bold;
+        color: white;
+    }
+    
+    .profile-controls input,
+    .profile-controls select,
+    .profile-controls textarea {
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+    
+    .answer-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    .answer-table th,
+    .answer-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    .answer-table th {
+        background: #667eea;
+        color: white;
+    }
+    
+    .answer-table tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+</style>
+{% endblock %}

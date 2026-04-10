@@ -1,0 +1,47 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Virtual env
+venv/
+venv38_flask/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Database
+*.sqlite
+*.sqlite3
+db.sqlite
+
+# Logs
+*.log
+logs/
+
+# Data files
+*.dat
+parsingres.dat
+data.txt
+river_test2.xml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Results
+results_*.csv
+results_*.xls
+
+# FTP deploy state
+.ftp-deploy-sync-state.json

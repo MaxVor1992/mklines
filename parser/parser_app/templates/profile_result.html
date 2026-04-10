@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <div class="wrap">
+        <div class="parser-table">
+            <h2>{{ title }}</h2>
+            
+            <div class="profile-result" style="padding: 20px; background: #f0f8ff; border-radius: 5px; margin-bottom: 20px;">
+                <h3>📊 Сводка профилирования</h3>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><strong>Операция:</strong></td>
+                        <td>{{ profile.operation }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Общее время:</strong></td>
+                        <td style="font-size: 1.5em; color: #e74c3c;">{{ "%.2f"|format(profile.time_seconds) }} сек</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Пик памяти:</strong></td>
+                        <td style="font-size: 1.2em; color: #3498db;">{{ "%.0f"|format(profile.memory_peak_kb) }} KB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Текущая память:</strong></td>
+                        <td>{{ "%.0f"|format(profile.memory_current_kb) }} KB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Timestamp:</strong></td>
+                        <td>{{ profile.timestamp }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <a href="/parser/profile_reports" class="parser-submit" style="text-decoration: none; display: inline-block;">
+                    ← Назад к отчётам
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .profile-result {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .profile-result h3 {
+        color: white;
+        margin-top: 0;
+    }
+    
+    .profile-result table td {
+        padding: 8px;
+    }
+</style>
+{% endblock %}

@@ -1,11 +1,13 @@
 import requests
 import bs4
 import time
+import os
 from resultobj import ParsingResult, SingleResult
 from utils import print_error, print_ok, print_warning, engines
-import concurrent.futures
-USER_ID = "3089"
-KEY = "9305a49e48a27d38f87261f26a6346f4d6508b6d"
+
+# БЕЗОПАСНОСТЬ: Чтение ключей из переменных окружения
+USER_ID = os.environ.get('XMLRIVER_USER_ID', '3089')
+KEY = os.environ.get('XMLRIVER_KEY', '9305a49e48a27d38f87261f26a6346f4d6508b6d')
 
 
 class SearchParser:
@@ -36,7 +38,7 @@ class SearchParser:
             "domain": 143  # domain ru
         }
         print("google search string ", search_string)
-        return requests.get(base_link, params=params)
+        return requests.get(base_link, params=params, timeout=30)
 
     def __one_yandex_request(self, search_string: str, page=0):
         base_link = SearchParser.YA
@@ -50,14 +52,14 @@ class SearchParser:
         }
         print("yandex search string ", search_string)
         print(params)
-        return requests.get(base_link, params=params)
+        return requests.get(base_link, params=params, timeout=30)
 
     def __parse_river_response(self, response: requests.Response, previous_results: dict):
         print(response.status_code)
         if response.status_code == 200:
             page = response.text
             print(page)
-            soup = bs4.BeautifulSoup(page, 'html5lib')
+            soup = bs4.BeautifulSoup(page, 'lxml')
             results = soup.find_all('results')  # results of search <results>
             if not results:
                 results = soup.find_all('error')

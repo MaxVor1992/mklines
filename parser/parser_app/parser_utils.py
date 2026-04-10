@@ -1,6 +1,7 @@
 from .resultobj import ParsingResult, SingleResult
 import xlwt
 import csv
+import re
 
 colors = {
     "aqua": "#00ffff",
@@ -46,30 +47,47 @@ colors = {
     "white": "#ffffff",
     "yellow": "#ffff00"}
 
-columns = ["#", "позиция", "url", "title", "request", "request position"]
+columns = ["#", "позиция", "url", "title", "description", "request", "request position"]
+
+
+def clean_title(title: str) -> str:
+    """Очистка title от нежелательных символов: CDATA, [, !, <, >"""
+    if not title:
+        return title
+    # Удаляем CDATA секции
+    title = re.sub(r'<!\[CDATA\[', '', title)
+    title = re.sub(r'\]\]>', '', title)
+    # Удаляем отдельные символы
+    title = title.replace('[', '')
+    title = title.replace(']', '')
+    title = title.replace('!', '')
+    title = title.replace('<', '')
+    title = title.replace('>', '')
+    # Убираем лишние пробелы
+    title = title.strip()
+    return title
 
 
 def save_csv(res, user_id='anon'):
     import os
     filename = f"results_{user_id}.csv"
-    file = open(filename, 'w')
-    writer = csv.writer(file)
-    writer.writerow(columns)
-    inx = 1
-    req_inx = 1
+    with open(filename, 'w') as file:
+        writer = csv.writer(file)
+        writer.writerow(columns)
+        inx = 1
+        req_inx = 1
 
-    for k in res.result:
-        sp = res.result[k]
-        inx_k = 1
-        for item in sp:
-            obj: SingleResult = item[0]
-            position = int(item[1])
-            tmp = [inx, position, obj.url, obj.title, k, req_inx]
-            writer.writerow(tmp)
-            inx += 1
-            inx_k += 1
-        req_inx += 1
-    file.close()
+        for k in res.result:
+            sp = res.result[k]
+            inx_k = 1
+            for item in sp:
+                obj: SingleResult = item[0]
+                position = int(item[1])
+                tmp = [inx, position, obj.url, clean_title(obj.title), clean_title(obj.description), k, req_inx]
+                writer.writerow(tmp)
+                inx += 1
+                inx_k += 1
+            req_inx += 1
 
 def prepare_xls(res):
     d = {}.fromkeys(columns, [])
@@ -84,7 +102,8 @@ def prepare_xls(res):
             d["#"].append(inx)
             d["позиция"].append(position)
             d["url"].append(obj.url)
-            d["title"].append(obj.title)
+            d["title"].append(clean_title(obj.title))
+            d["description"].append(clean_title(obj.description))
             d["request"].append(k)
             d["request position"].append(req_inx)
             inx += 1
@@ -112,17 +131,23 @@ def save_xls(res: ParsingResult, user_id='anon'):
         for item in sp:
             obj: SingleResult = item[0]
             position = int(item[1])
-            sheet.write(inx, 0, position)
-            sheet.write(inx, 1, obj.url)
-            sheet.write(inx, 2, obj.title)
-            sheet.write(inx, 3, k)
-            sheet.write(inx, 4, req_inx)
+            # Запись в общий лист (all)
+            sheet.write(inx, 0, inx)  # Номер строки
+            sheet.write(inx, 1, position)  # Позиция
+            sheet.write(inx, 2, obj.url)
+            sheet.write(inx, 3, clean_title(obj.title))
+            sheet.write(inx, 4, clean_title(obj.description))
+            sheet.write(inx, 5, k)  # request
+            sheet.write(inx, 6, req_inx)  # request position
 
-            sheet_k.write(inx_k, 0, position)
-            sheet_k.write(inx_k, 1, obj.url)
-            sheet_k.write(inx_k, 2, obj.title)
-            sheet_k.write(inx_k, 3, k)
-            sheet_k.write(inx_k, 4, req_inx)
+            # Запись в лист конкретного запроса
+            sheet_k.write(inx_k, 0, inx_k)  # Номер строки
+            sheet_k.write(inx_k, 1, position)  # Позиция
+            sheet_k.write(inx_k, 2, obj.url)
+            sheet_k.write(inx_k, 3, clean_title(obj.title))
+            sheet_k.write(inx_k, 4, clean_title(obj.description))
+            sheet_k.write(inx_k, 5, k)  # request
+            sheet_k.write(inx_k, 6, req_inx)  # request position
             inx += 1
             inx_k += 1
         req_inx += 1

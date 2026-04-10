@@ -98,7 +98,7 @@ def signup():
 
         # create a new user with the form data. Hash the password so the plaintext version isn't saved.
         new_user = user_models.User(email=email, username=name,
-                                    password_hash=generate_password_hash(password, method='sha256'), limits=100)
+                                    password_hash=generate_password_hash(password), limits=100)
         role = user_models.Role.query.filter_by(name='User').one()
         new_user.roles.append(role)
         # add the new user to the database
