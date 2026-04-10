@@ -29,8 +29,8 @@ class SearchParser:
     YA = "http://xmlriver.com/search_yandex/xml"
     GOO = "http://xmlriver.com/search/xml"
     
-    def __init__(self, user_requests, engine="yandex", count=10, repeats=1, 
-                 verbose=False, region="213", docache=True, max_workers=4):
+    def __init__(self, user_requests, engine="yandex", count=10, repeats=1,
+                 verbose=False, region="213", docache=True, max_workers=None):
         self.requests = user_requests
         self.system = engine
         self.region = region
@@ -38,10 +38,12 @@ class SearchParser:
         self.repeats = repeats
         self.verbose = verbose
         self.docache = docache
-        self.max_workers = max_workers
-        self.delay_repeats = 0.1  # Уменьшенная задержка
-        self.timeout = 30  # Таймаут запроса
-        
+        # ПРОБЛЕМА 2: Автоматический max_workers = min(кол-во запросов, 10)
+        self.max_workers = min(len(user_requests), 10) if max_workers is None else max_workers
+        self.delay_repeats = 0.1
+        # ПРОБЛЕМА 1: Таймаут увеличен до 70 сек (с запасом на 60 сек max XMLRiver)
+        self.timeout = 70
+
         # Кэш для результатов
         self._cache = {} if docache else None
         self._cache_time = {}
@@ -81,23 +83,41 @@ class SearchParser:
                 "domain": 143
             }
         
-        try:
-            response = requests.get(base_link, params=params, timeout=self.timeout)
-            response.raise_for_status()
-            
-            # Сохранение в кэш
-            if self._cache:
-                self._cache[cache_key] = response
-                self._cache_time[cache_key] = time.time()
-            
-            return response
-            
-        except requests.exceptions.Timeout:
-            logger.error(f"Timeout for query: {search_string}")
-            raise Exception(f"Таймаут запроса для: {search_string}")
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Request error for {search_string}: {e}")
-            raise
+        # ПРОБЛЕМА 3: Retry при таймауте — 3 попытки с нарастающей задержкой
+        max_retries = 3
+        last_error = None
+
+        for retry in range(max_retries):
+            try:
+                response = requests.get(base_link, params=params, timeout=self.timeout)
+                response.raise_for_status()
+
+                # Сохранение в кэш
+                if self._cache:
+                    self._cache[cache_key] = response
+                    self._cache_time[cache_key] = time.time()
+
+                return response
+
+            except requests.exceptions.Timeout:
+                last_error = f"Таймаут запроса для: {search_string}"
+                if retry < max_retries - 1:
+                    wait = 5 * (retry + 1)  # 5с, 10с
+                    logger.warning(f"Timeout for {search_string}, retry {retry+1}/{max_retries}, waiting {wait}s")
+                    time.sleep(wait)
+                else:
+                    logger.error(f"Timeout for query after {max_retries} retries: {search_string}")
+                    raise Exception(last_error)
+
+            except requests.exceptions.RequestException as e:
+                last_error = f"Request error for {search_string}: {e}"
+                if retry < max_retries - 1:
+                    wait = 3 * (retry + 1)
+                    logger.warning(f"Request error for {search_string}, retry {retry+1}/{max_retries}, waiting {wait}s")
+                    time.sleep(wait)
+                else:
+                    logger.error(f"Request error after {max_retries} retries: {search_string}")
+                    raise Exception(last_error)
 
     def _parse_response(self, response, previous_results: dict):
         """Парсинг XML ответа"""
@@ -106,7 +126,8 @@ class SearchParser:
             return
         
         from bs4 import BeautifulSoup
-        soup = BeautifulSoup(response.text, 'html5lib')
+        # ПРОБЛЕМА 4: lxml вместо html5lib — в 3-5 раз быстрее, меньше памяти
+        soup = BeautifulSoup(response.text, 'lxml')
         results = soup.find_all('results')
         
         if not results:
